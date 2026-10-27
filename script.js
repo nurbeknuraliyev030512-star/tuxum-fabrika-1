@@ -1,21 +1,25 @@
-// Data Models & Initial State
+// Const & State
+const EGG_PER_FLEYKA = 30; // 1 Fleyka = 30 dona
+
 let markets = [
     { id: 1, name: "Iroda Market", owner: "Iroda opa", phone: "+998901234567", location: "Chorsu daxasi", debt: 450000 },
-    { id: 2, name: "Baraka Do'koni", owner: "Jasur aka", phone: "+998912345678", location: "Yunusobod 4-mavze", debt: 120000 },
+    { id: 2, name: "Baraka Do'koni", owner: "Jasur aka", phone: "+998912345678", location: "Yunusobod 4", debt: 120000 },
     { id: 3, name: "Oasis Supermarket", owner: "Mirzo aka", phone: "+998933456789", location: "Mirzo Ulug'bek", debt: 0 },
     { id: 4, name: "Fayz Market", owner: "Hikmat aka", phone: "+998944567890", location: "Chilanzar 10", debt: 890000 },
     { id: 5, name: "Zamin Do'koni", owner: "Anvar aka", phone: "+998955678901", location: "Sergeli 8", debt: 230000 },
-    { id: 6, name: "Saxovat Market", owner: "Qodir aka", phone: "+998909876543", location: "Qo'yliq bozori", debt: 560000 },
-    { id: 7, name: "Hosil Market", owner: "Sardor aka", phone: "+998918765432", location: "Olmazor tumani", debt: 0 }
+    { id: 6, name: "Saxovat Market", owner: "Qodir aka", phone: "+998909876543", location: "Qo'yliq bozori", debt: 560000 }
 ];
 
-let prices = { katta: 1500, ortacha: 1300, kichik: 1100 };
-let stock = { katta: 2500, ortacha: 1800, kichik: 900 };
+// Fleyka Narxlari
+let fleykaPrices = { katta: 45000, ortacha: 39000, kichik: 33000 };
+// Ombor (dona hisobida saqlanadi)
+let stockPieces = { katta: 2500, ortacha: 1800, kichik: 900 };
+
 let todayOrders = [];
 let activeMarketForBarter = null;
 
 window.onload = function() {
-    document.getElementById('today-date').querySelector('span').innerText = new Date().toLocaleDateString('uz-UZ');
+    document.getElementById('today-date').innerText = new Date().toLocaleDateString('uz-UZ');
     populateMarketSelect();
     renderMarkets();
     updateStats();
@@ -24,7 +28,7 @@ window.onload = function() {
 
 function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn-lg').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
     btn.classList.add('active');
 }
@@ -47,12 +51,18 @@ function populateMarketSelect() {
 
 function calculateOrder() {
     let marketId = document.getElementById('order-market').value;
-    let qKatta = parseInt(document.getElementById('qty-katta').value) || 0;
-    let qOrtacha = parseInt(document.getElementById('qty-ortacha').value) || 0;
-    let qKichik = parseInt(document.getElementById('qty-kichik').value) || 0;
+    let flKatta = parseInt(document.getElementById('qty-katta').value) || 0;
+    let flOrtacha = parseInt(document.getElementById('qty-ortacha').value) || 0;
+    let flKichik = parseInt(document.getElementById('qty-kichik').value) || 0;
     let paid = parseInt(document.getElementById('paid-amount').value) || 0;
 
-    let currentSum = (qKatta * prices.katta) + (qOrtacha * prices.ortacha) + (qKichik * prices.kichik);
+    // Dona hisobini ko'rsatish
+    document.getElementById('info-katta').innerText = `${flKatta * EGG_PER_FLEYKA} dona (${flKatta} fleyka)`;
+    document.getElementById('info-ortacha').innerText = `${flOrtacha * EGG_PER_FLEYKA} dona (${flOrtacha} fleyka)`;
+    document.getElementById('info-kichik').innerText = `${flKichik * EGG_PER_FLEYKA} dona (${flKichik} fleyka)`;
+
+    // Summa hisobi (Fleyka narxi bo'yicha)
+    let currentSum = (flKatta * fleykaPrices.katta) + (flOrtacha * fleykaPrices.ortacha) + (flKichik * fleykaPrices.kichik);
     let debt = 0;
 
     if (marketId) {
@@ -69,9 +79,9 @@ function calculateOrder() {
 
 function saveOrder() {
     let marketId = document.getElementById('order-market').value;
-    let qKatta = parseInt(document.getElementById('qty-katta').value) || 0;
-    let qOrtacha = parseInt(document.getElementById('qty-ortacha').value) || 0;
-    let qKichik = parseInt(document.getElementById('qty-kichik').value) || 0;
+    let flKatta = parseInt(document.getElementById('qty-katta').value) || 0;
+    let flOrtacha = parseInt(document.getElementById('qty-ortacha').value) || 0;
+    let flKichik = parseInt(document.getElementById('qty-kichik').value) || 0;
     let paid = parseInt(document.getElementById('paid-amount').value) || 0;
 
     if (!marketId) {
@@ -79,31 +89,32 @@ function saveOrder() {
         return;
     }
 
-    if (qKatta === 0 && qOrtacha === 0 && qKichik === 0) {
-        alert("Kamida bitta tuxum miqdorini kiriting!");
+    if (flKatta === 0 && flOrtacha === 0 && flKichik === 0) {
+        alert("Kamida 1 fleyka tuxum sonini kiriting!");
         return;
     }
 
-    let currentSum = (qKatta * prices.katta) + (qOrtacha * prices.ortacha) + (qKichik * prices.kichik);
+    let currentSum = (flKatta * fleykaPrices.katta) + (flOrtacha * fleykaPrices.ortacha) + (flKichik * fleykaPrices.kichik);
     let m = markets.find(x => x.id == marketId);
 
     let unpaid = currentSum - paid;
     m.debt += unpaid;
 
-    stock.katta -= qKatta;
-    stock.ortacha -= qOrtacha;
-    stock.kichik -= qKichik;
+    // Ombordan dona hisobida kamaytirish
+    stockPieces.katta -= (flKatta * EGG_PER_FLEYKA);
+    stockPieces.ortacha -= (flOrtacha * EGG_PER_FLEYKA);
+    stockPieces.kichik -= (flKichik * EGG_PER_FLEYKA);
 
     todayOrders.unshift({
         marketName: m.name,
-        katta: qKatta,
-        ortacha: qOrtacha,
-        kichik: qKichik,
+        flKatta,
+        flOrtacha,
+        flKichik,
         sum: currentSum,
         paid: paid
     });
 
-    alert("Zakaz muvaffaqiyatli topshirildi va hisoblar yangilandi!");
+    alert("Zakaz saqlandi va hisob yangilandi!");
 
     document.getElementById('qty-katta').value = 0;
     document.getElementById('qty-ortacha').value = 0;
@@ -125,20 +136,20 @@ function renderMarkets() {
     markets.filter(m => m.name.toLowerCase().includes(search) || m.owner.toLowerCase().includes(search)).forEach(m => {
         let hasDebt = m.debt > 0;
         list.innerHTML += `
-            <div class="market-card ${hasDebt ? 'has-debt' : ''}">
-                <div class="market-info">
+            <div class="market-card-lg ${hasDebt ? 'has-debt' : ''}">
+                <div class="m-header-lg">
                     <div>
-                        <div class="m-name">${m.name}</div>
-                        <div class="m-sub"><i class="fa-solid fa-user"></i> ${m.owner}  |  <i class="fa-solid fa-location-dot"></i> ${m.location}</div>
+                        <div class="m-name-lg">${m.name}</div>
+                        <div class="m-sub-lg">👤 ${m.owner} | 📍 ${m.location}</div>
                     </div>
-                    <div class="m-debt-badge ${!hasDebt ? 'clear' : ''}">
-                        ${hasDebt ? m.debt.toLocaleString() + ' so\'m qarz' : 'Qarzsiz'}
+                    <div class="debt-badge-lg ${!hasDebt ? 'no-debt' : ''}">
+                        ${hasDebt ? 'Qarz: ' + m.debt.toLocaleString() + ' so\'m' : 'Qarzsiz'}
                     </div>
                 </div>
-                <div class="market-actions">
-                    <a href="tel:${m.phone}" class="m-btn call-btn"><i class="fa-solid fa-phone"></i> Qo'ng'iroq</a>
-                    <button class="m-btn sms-btn" onclick="sendSMS('${m.phone}', '${m.name}', ${m.debt})"><i class="fa-solid fa-comment-dots"></i> SMS</button>
-                    <button class="m-btn barter-btn" onclick="openBarterModal(${m.id})"><i class="fa-solid fa-right-left"></i> Barter</button>
+                <div class="m-actions-lg">
+                    <a href="tel:${m.phone}" class="act-btn-lg call-bg">📞 TEL</a>
+                    <button class="act-btn-lg sms-bg" onclick="sendSMS('${m.phone}', '${m.name}', ${m.debt})">💬 SMS</button>
+                    <button class="act-btn-lg barter-bg" onclick="openBarterModal(${m.id})">🔄 BARTER</button>
                 </div>
             </div>
         `;
@@ -148,23 +159,20 @@ function renderMarkets() {
 function renderTodayOrders() {
     let container = document.getElementById('today-orders-list');
     if (todayOrders.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-box-open"></i>
-                <p>Bugun hali zakaz saqlanmadi</p>
-            </div>`;
+        container.innerHTML = `<p style="text-align: center; color: var(--text-dim); font-size: 1rem; padding: 20px;">Bugun hali zakazlar kiritilmadi</p>`;
         return;
     }
     container.innerHTML = "";
     todayOrders.forEach(o => {
         container.innerHTML += `
-            <div style="background: rgba(11, 15, 23, 0.5); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
-                <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 4px;">
+            <div style="background: #0a0e17; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; margin-bottom: 6px;">
                     <span>${o.marketName}</span>
-                    <span style="color: var(--primary);">${o.sum.toLocaleString()} so'm</span>
+                    <span style="color: var(--primary-yellow);">${o.sum.toLocaleString()} so'm</span>
                 </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">
-                    Katta: ${o.katta} шт | O'rtacha: ${o.ortacha} шт | Kichik: ${o.kichik} шт (Berildi: ${o.paid.toLocaleString()} so'm)
+                <div style="font-size: 0.95rem; color: var(--text-light); font-weight: 700;">
+                    Katta: ${o.flKatta} fl | O'rtacha: ${o.flOrtacha} fl | Kichik: ${o.flKichik} fl 
+                    <br><small style="color: var(--success-green);">(Berildi: ${o.paid.toLocaleString()} so'm)</small>
                 </div>
             </div>
         `;
@@ -176,13 +184,13 @@ function sendSMS(phone, name, debt) {
         alert(name + " marketining qarzi yo'q!");
         return;
     }
-    let msg = `Hormang, ${name}! Sizning tuxum yetkazib berish xizmatidan qarzingiz: ${debt.toLocaleString()} so'm. Iltimos, to'lovni qilishingizni so'raymiz. Rahmat!`;
+    let msg = `Hormang, ${name}! Sizning tuxum yetkazib berish xizmatidan qarzingiz: ${debt.toLocaleString()} so'm. To'lovni qilishingizni so'raymiz. Rahmat!`;
     window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function openBarterModal(id) {
     activeMarketForBarter = markets.find(m => m.id == id);
-    document.getElementById('barter-market-name').innerText = activeMarketForBarter.name + " (Joriy qarz: " + activeMarketForBarter.debt.toLocaleString() + " so'm)";
+    document.getElementById('barter-market-name').innerText = activeMarketForBarter.name + " (Qarz: " + activeMarketForBarter.debt.toLocaleString() + " so'm)";
     document.getElementById('barter-modal').classList.add('open');
 }
 
@@ -194,12 +202,12 @@ function applyBarter() {
     let amount = parseInt(document.getElementById('barter-amount').value) || 0;
     let item = document.getElementById('barter-item').value;
     if (amount <= 0 || !item) {
-        alert("Tovar ma'lumotlarini kiriting!");
+        alert("Ma'lumotlarni to'liq kiriting!");
         return;
     }
     activeMarketForBarter.debt -= amount;
     if (activeMarketForBarter.debt < 0) activeMarketForBarter.debt = 0;
-    alert("Tovar muvaffaqiyatli qabul qilindi va qarzdan ayirildi!");
+    alert("Tovar qabul qilindi va qarzdan ayirildi!");
     closeBarterModal();
     renderMarkets();
     updateStats();
@@ -224,33 +232,44 @@ function saveNewMarket() {
         return;
     }
     markets.push({ id: markets.length + 1, name, owner, phone, location, debt: 0 });
-    alert("Yangi market bazaga saqlandi!");
+    alert("Yangi market qo'shildi!");
     closeAddMarketModal();
     populateMarketSelect();
     renderMarkets();
 }
 
 function updatePrices() {
-    prices.katta = parseInt(document.getElementById('price-katta').value) || 0;
-    prices.ortacha = parseInt(document.getElementById('price-ortacha').value) || 0;
-    prices.kichik = parseInt(document.getElementById('price-kichik').value) || 0;
+    fleykaPrices.katta = parseInt(document.getElementById('price-katta').value) || 0;
+    fleykaPrices.ortacha = parseInt(document.getElementById('price-ortacha').value) || 0;
+    fleykaPrices.kichik = parseInt(document.getElementById('price-kichik').value) || 0;
 
-    document.getElementById('display-price-katta').innerText = prices.katta.toLocaleString() + " so'm";
-    document.getElementById('display-price-ortacha').innerText = prices.ortacha.toLocaleString() + " so'm";
-    document.getElementById('display-price-kichik').innerText = prices.kichik.toLocaleString() + " so'm";
+    document.getElementById('disp-price-katta').innerText = fleykaPrices.katta.toLocaleString() + " so'm/fl";
+    document.getElementById('disp-price-ortacha').innerText = fleykaPrices.ortacha.toLocaleString() + " so'm/fl";
+    document.getElementById('disp-price-kichik').innerText = fleykaPrices.kichik.toLocaleString() + " so'm/fl";
 
     calculateOrder();
 }
 
 function updateStockUI() {
-    document.getElementById('stock-katta').innerText = stock.katta.toLocaleString();
-    document.getElementById('stock-ortacha').innerText = stock.ortacha.toLocaleString();
-    document.getElementById('stock-kichik').innerText = stock.kichik.toLocaleString();
+    // Fleyka va Dona ko'rinishida hisoblash
+    let flK = Math.floor(stockPieces.katta / EGG_PER_FLEYKA);
+    let flO = Math.floor(stockPieces.ortacha / EGG_PER_FLEYKA);
+    let flKi = Math.floor(stockPieces.kichik / EGG_PER_FLEYKA);
+
+    document.getElementById('stock-katta-fl').innerText = flK + " fleyka";
+    document.getElementById('stock-katta-dona').innerText = stockPieces.katta.toLocaleString() + " dona";
+
+    document.getElementById('stock-ortacha-fl').innerText = flO + " fleyka";
+    document.getElementById('stock-ortacha-dona').innerText = stockPieces.ortacha.toLocaleString() + " dona";
+
+    document.getElementById('stock-kichik-fl').innerText = flKi + " fleyka";
+    document.getElementById('stock-kichik-dona').innerText = stockPieces.kichik.toLocaleString() + " dona";
 }
 
 function updateStats() {
     let totalDebt = markets.reduce((acc, m) => acc + m.debt, 0);
     let todaySales = todayOrders.reduce((acc, o) => acc + o.sum, 0);
+
     document.getElementById('total-debt').innerText = totalDebt.toLocaleString() + " so'm";
     document.getElementById('today-sales').innerText = todaySales.toLocaleString() + " so'm";
 }
