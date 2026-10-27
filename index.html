@@ -2,209 +2,316 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EggPro - Tuxum Yetkazib Berish Tizimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EggPro Max — Tuxum Biznes Tizimi</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <span>🥚</span> EggPro v2.0
+    <!-- Top Glow Effects -->
+    <div class="glow-bg"></div>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-egg"></i></div>
+            <div class="brand-text">
+                <h1>EggPro <span>MAX</span></h1>
+                <p>Tuxum Yetkazib Berish Tizimi</p>
+            </div>
         </div>
-        <div id="today-date" class="date-badge"></div>
+        <div class="date-chip" id="today-date">
+            <i class="fa-regular fa-calendar-days"></i> <span>--.--.----</span>
+        </div>
     </header>
 
-    <div class="container">
+    <main class="app-container">
+        
         <!-- Tab 1: Zakaz va Kalkulyator -->
-        <div id="tab-orders" class="tab-content active">
-            <div class="card">
-                <div class="card-title">Yangi Zakaz va Hisob-kitob</div>
-                
-                <div class="form-group">
-                    <label>Marketni Tanlang:</label>
-                    <select id="order-market" onchange="calculateOrder()">
-                        <option value="">-- Marketni tanlang --</option>
-                    </select>
+        <section id="tab-orders" class="tab-content active">
+            
+            <!-- Kalkulyator Card -->
+            <div class="glass-card main-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-calculator accent-icon"></i>
+                        <h2>Yangi Zakaz va Kalkulyator</h2>
+                    </div>
+                    <span class="pulse-badge">Live Hisob</span>
                 </div>
 
-                <div class="grid-3">
-                    <div class="form-group">
-                        <label>Katta</label>
-                        <input type="number" id="qty-katta" value="0" min="0" oninput="calculateOrder()">
-                    </div>
-                    <div class="form-group">
-                        <label>O'rtacha</label>
-                        <input type="number" id="qty-ortacha" value="0" min="0" oninput="calculateOrder()">
-                    </div>
-                    <div class="form-group">
-                        <label>Kichik</label>
-                        <input type="number" id="qty-kichik" value="0" min="0" oninput="calculateOrder()">
+                <div class="input-field">
+                    <label><i class="fa-solid fa-store"></i> Marketni Tanlang</label>
+                    <div class="select-wrapper">
+                        <select id="order-market" onchange="calculateOrder()">
+                            <option value="">-- Do'konni tanlang --</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
                     </div>
                 </div>
 
-                <div class="calc-result">
-                    <div class="calc-row">
-                        <span>Zakaz summasi:</span>
-                        <span id="res-current">0 so'm</span>
+                <!-- 3 Tur Tuxum Kiratish Grid -->
+                <div class="egg-grid">
+                    <div class="egg-item katta">
+                        <div class="egg-badge">1-TUR</div>
+                        <div class="egg-title">Katta</div>
+                        <div class="egg-price-tag" id="display-price-katta">1,500 so'm</div>
+                        <div class="counter-control">
+                            <button onclick="changeQty('qty-katta', -10)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="qty-katta" value="0" min="0" oninput="calculateOrder()">
+                            <button onclick="changeQty('qty-katta', 10)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
-                    <div class="calc-row">
-                        <span>Eski qarz:</span>
-                        <span id="res-debt">0 so'm</span>
+
+                    <div class="egg-item ortacha">
+                        <div class="egg-badge">2-TUR</div>
+                        <div class="egg-title">O'rtacha</div>
+                        <div class="egg-price-tag" id="display-price-ortacha">1,300 so'm</div>
+                        <div class="counter-control">
+                            <button onclick="changeQty('qty-ortacha', -10)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="qty-ortacha" value="0" min="0" oninput="calculateOrder()">
+                            <button onclick="changeQty('qty-ortacha', 10)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
-                    <div class="calc-row calc-total">
+
+                    <div class="egg-item kichik">
+                        <div class="egg-badge">3-TUR</div>
+                        <div class="egg-title">Kichik</div>
+                        <div class="egg-price-tag" id="display-price-kichik">1,100 so'm</div>
+                        <div class="counter-control">
+                            <button onclick="changeQty('qty-kichik', -10)"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="qty-kichik" value="0" min="0" oninput="calculateOrder()">
+                            <button onclick="changeQty('qty-kichik', 10)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Natija Paneli -->
+                <div class="bill-panel">
+                    <div class="bill-row">
+                        <span><i class="fa-solid fa-basket-shopping"></i> Zakaz summasi:</span>
+                        <strong id="res-current">0 so'm</strong>
+                    </div>
+                    <div class="bill-row warning-row">
+                        <span><i class="fa-solid fa-clock-rotate-left"></i> Eski qarz:</span>
+                        <strong id="res-debt">0 so'm</strong>
+                    </div>
+                    <div class="bill-divider"></div>
+                    <div class="bill-row total-row">
                         <span>Jami to'lanishi kerak:</span>
-                        <span id="res-total">0 so'm</span>
+                        <strong id="res-total">0 so'm</strong>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top: 14px;">
-                    <label>Berilgan pul (To'lov):</label>
-                    <input type="number" id="paid-amount" placeholder="0" oninput="calculateOrder()">
+                <!-- Berilgan Pul -->
+                <div class="input-field" style="margin-top: 18px;">
+                    <label><i class="fa-solid fa-money-bill-wave"></i> Berilgan Naqd/Karta summasi</label>
+                    <input type="number" id="paid-amount" placeholder="0 so'm" oninput="calculateOrder()">
                 </div>
 
-                <button class="btn btn-success" style="margin-top: 10px;" onclick="saveOrder()">Zakazni Tasdiqlash & Saqlash</button>
+                <button class="action-btn-main success-gradient" onclick="saveOrder()">
+                    <i class="fa-solid fa-circle-check"></i> Zakazni Tasdiqlash va Saqlash
+                </button>
             </div>
 
-            <div class="card">
-                <div class="card-title">Bugungi Berilgan Zakazlar</div>
-                <div id="today-orders-list">
-                    <p style="text-align: center; color: var(--text-muted); font-size: 0.88rem;">Hali bugun zakaz kiritilmadi</p>
+            <!-- Bugungi Zakazlar -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-list-check accent-icon"></i>
+                        <h2>Bugungi Zakazlar Ro'yxati</h2>
+                    </div>
+                </div>
+                <div id="today-orders-list" class="orders-stream">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i>
+                        <p>Bugun hali zakaz saqlanmadi</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Tab 2: Marketlar Bazasi -->
-        <div id="tab-markets" class="tab-content">
-            <div class="card">
-                <div class="card-title">
-                    <span>Marketlar (20+ do'kon)</span>
-                    <button class="btn btn-small" onclick="openAddMarketModal()">+ Qo'shish</button>
+        <section id="tab-markets" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-shop accent-icon"></i>
+                        <h2>Marketlar Bazasi</h2>
+                    </div>
+                    <button class="add-btn-neon" onclick="openAddMarketModal()">
+                        <i class="fa-solid fa-plus"></i> Yangi
+                    </button>
                 </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                    <input type="text" id="search-market" placeholder="Market nomini qidiring..." oninput="renderMarkets()">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-market" placeholder="Market nomi yoki egasini qidiring..." oninput="renderMarkets()">
                 </div>
             </div>
 
-            <div id="markets-list"></div>
-        </div>
+            <div id="markets-list" class="markets-grid"></div>
+        </section>
 
         <!-- Tab 3: Ombor va Narxlar -->
-        <div id="tab-stock" class="tab-content">
-            <div class="card">
-                <div class="card-title">Tuxum Narxlarini Boshqarish</div>
-                <div class="form-group">
-                    <label>Katta Tuxum Narxi (dona):</label>
-                    <input type="number" id="price-katta" value="1500" onchange="updatePrices()">
+        <section id="tab-stock" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-tags accent-icon"></i>
+                        <h2>Kunlik Tuxum Narxlari</h2>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>O'rtacha Tuxum Narxi (dona):</label>
-                    <input type="number" id="price-ortacha" value="1300" onchange="updatePrices()">
-                </div>
-                <div class="form-group">
-                    <label>Kichik Tuxum Narxi (dona):</label>
-                    <input type="number" id="price-kichik" value="1100" onchange="updatePrices()">
+                <div class="price-inputs">
+                    <div class="input-field">
+                        <label>Katta Tuxum (dona)</label>
+                        <input type="number" id="price-katta" value="1500" onchange="updatePrices()">
+                    </div>
+                    <div class="input-field">
+                        <label>O'rtacha Tuxum (dona)</label>
+                        <input type="number" id="price-ortacha" value="1300" onchange="updatePrices()">
+                    </div>
+                    <div class="input-field">
+                        <label>Kichik Tuxum (dona)</label>
+                        <input type="number" id="price-kichik" value="1100" onchange="updatePrices()">
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-title">Ombor Astatogi (Qoldiq)</div>
-                <div class="grid-3">
-                    <div class="stat-box">
-                        <div class="stat-lbl">Katta</div>
-                        <div class="stat-val" id="stock-katta">2,500</div>
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-warehouse accent-icon"></i>
+                        <h2>Ombor Astatogi (Qoldiq)</h2>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">O'rtacha</div>
-                        <div class="stat-val" id="stock-ortacha">1,800</div>
+                </div>
+                <div class="stock-dashboard">
+                    <div class="stock-card katta-card">
+                        <div class="stock-icon"><i class="fa-solid fa-egg"></i></div>
+                        <span class="stock-lbl">Katta</span>
+                        <strong class="stock-val" id="stock-katta">2,500</strong>
+                        <small>dona</small>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">Kichik</div>
-                        <div class="stat-val" id="stock-kichik">900</div>
+                    <div class="stock-card ortacha-card">
+                        <div class="stock-icon"><i class="fa-solid fa-egg"></i></div>
+                        <span class="stock-lbl">O'rtacha</span>
+                        <strong class="stock-val" id="stock-ortacha">1,800</strong>
+                        <small>dona</small>
+                    </div>
+                    <div class="stock-card kichik-card">
+                        <div class="stock-icon"><i class="fa-solid fa-egg"></i></div>
+                        <span class="stock-lbl">Kichik</span>
+                        <strong class="stock-val" id="stock-kichik">900</strong>
+                        <small>dona</small>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Tab 4: Hisobot -->
-        <div id="tab-stats" class="tab-content">
-            <div class="card">
-                <div class="card-title">Umumiy Moliyaviy Hisobot</div>
-                <div class="grid-2">
-                    <div class="stat-box">
-                        <div class="stat-lbl">Jami Nasiya (Qarz)</div>
-                        <div class="stat-val" id="total-debt" style="color: var(--danger);">0 so'm</div>
+        <section id="tab-stats" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i class="fa-solid fa-chart-pie accent-icon"></i>
+                        <h2>Moliyaviy Hisobot</h2>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">Bugungi Tushum</div>
-                        <div class="stat-val" id="today-sales" style="color: var(--success);">0 so'm</div>
+                </div>
+                <div class="stats-overview">
+                    <div class="stat-banner danger-banner">
+                        <div class="banner-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                        <div class="banner-info">
+                            <span>Jami Nasiya (Qarzdorlik)</span>
+                            <strong id="total-debt">0 so'm</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-banner success-banner">
+                        <div class="banner-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="banner-info">
+                            <span>Bugungi Tushum Summasi</span>
+                            <strong id="today-sales">0 so'm</strong>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
+    </main>
+
+    <!-- Modallar -->
     <!-- Barter Modal -->
-    <div id="barter-modal" class="modal">
-        <div class="modal-body">
-            <h3 style="margin-bottom: 6px;">Tovar Ayirish (Barter)</h3>
-            <p id="barter-market-name" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;"></p>
-            <div class="form-group">
-                <label>Olingan mahsulot (Un, Yog' va h.k):</label>
-                <input type="text" id="barter-item" placeholder="Mahsulot nomi">
+    <div id="barter-modal" class="modal-backdrop">
+        <div class="glass-modal">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-arrow-right-arrow-left"></i> Barter / Tovar Ayirish</h3>
+                <button class="close-btn" onclick="closeBarterModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="form-group">
-                <label>Summasi (so'm):</label>
-                <input type="number" id="barter-amount" placeholder="0">
+            <p id="barter-market-name" class="modal-subtitle"></p>
+            <div class="input-field">
+                <label>Olingan mahsulot nomi (Un, Yog' va h.k)</label>
+                <input type="text" id="barter-item" placeholder="Masalan: 2 qop Un">
             </div>
-            <button class="btn btn-success" onclick="applyBarter()">Qarzdan Ayirish</button>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeBarterModal()">Yopish</button>
+            <div class="input-field">
+                <label>Tovar summasi (so'm)</label>
+                <input type="number" id="barter-amount" placeholder="0 so'm">
+            </div>
+            <button class="action-btn-main warning-gradient" onclick="applyBarter()">
+                <i class="fa-solid fa-minus-circle"></i> Qarzdan Ayirish
+            </button>
         </div>
     </div>
 
     <!-- Yangi Market Modal -->
-    <div id="add-market-modal" class="modal">
-        <div class="modal-body">
-            <h3 style="margin-bottom: 16px;">Yangi Market Qo'shish</h3>
-            <div class="form-group">
-                <label>Market Nomi:</label>
+    <div id="add-market-modal" class="modal-backdrop">
+        <div class="glass-modal">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-store"></i> Yangi Market Qo'shish</h3>
+                <button class="close-btn" onclick="closeAddMarketModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="input-field">
+                <label>Market Nomi</label>
                 <input type="text" id="new-name" placeholder="Masalan: Fayz Market">
             </div>
-            <div class="form-group">
-                <label>Do'kon Egasi Ismi:</label>
+            <div class="input-field">
+                <label>Do'kon Egasi Ismi</label>
                 <input type="text" id="new-owner" placeholder="Masalan: Alisher aka">
             </div>
-            <div class="form-group">
-                <label>Telefon Raqam:</label>
+            <div class="input-field">
+                <label>Telefon Raqam</label>
                 <input type="text" id="new-phone" value="+998">
             </div>
-            <div class="form-group">
-                <label>Manzil / Lokatsiya:</label>
-                <input type="text" id="new-location" placeholder="Masalan: Chorsu mavzesi">
+            <div class="input-field">
+                <label>Manzil / Lokatsiya</label>
+                <input type="text" id="new-location" placeholder="Masalan: Chorsu bozori yonida">
             </div>
-            <button class="btn btn-success" onclick="saveNewMarket()">Saqlash</button>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeAddMarketModal()">Yopish</button>
+            <button class="action-btn-main success-gradient" onclick="saveNewMarket()">
+                <i class="fa-solid fa-floppy-disk"></i> Bazaga Saqlash
+            </button>
         </div>
     </div>
 
-    <!-- Pastki Navigatsiya -->
-    <nav>
-        <button class="nav-btn active" onclick="switchTab('orders', this)">
-            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            Zakaz
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('orders', this)">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Zakaz</span>
         </button>
-        <button class="nav-btn" onclick="switchTab('markets', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-7h-3v2h3v-2z"/></svg>
-            Marketlar
+        <button class="nav-item" onclick="switchTab('markets', this)">
+            <i class="fa-solid fa-store"></i>
+            <span>Marketlar</span>
         </button>
-        <button class="nav-btn" onclick="switchTab('stock', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zM6 6h12v4H6zm0 6h12v6H6z"/></svg>
-            Ombor
+        <button class="nav-item" onclick="switchTab('stock', this)">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Ombor</span>
         </button>
-        <button class="nav-btn" onclick="switchTab('stats', this)">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
-            Hisobot
+        <button class="nav-item" onclick="switchTab('stats', this)">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Hisobot</span>
         </button>
     </nav>
 
